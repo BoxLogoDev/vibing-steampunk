@@ -34,6 +34,13 @@ type DependencyInfo struct {
 	Objects     []string // Object names (populated on load)
 }
 
+// GetDependencyZIP returns the embedded ZIP data for a named dependency.
+// Returns nil if the dependency is not available.
+func GetDependencyZIP(name string) []byte {
+	// No embedded ZIPs yet - return nil for all
+	return nil
+}
+
 // GetAvailableDependencies returns list of embedded dependencies.
 func GetAvailableDependencies() []DependencyInfo {
 	return []DependencyInfo{

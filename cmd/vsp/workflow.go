@@ -238,7 +238,7 @@ func runTestWorkflow(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func createADTClient() *adt.Client {
+func createADTClient(extra ...adt.Option) *adt.Client {
 	opts := []adt.Option{
 		adt.WithClient(cfg.Client),
 		adt.WithLanguage(cfg.Language),
@@ -252,6 +252,7 @@ func createADTClient() *adt.Client {
 		opts = append(opts, adt.WithCookies(cfg.Cookies))
 	}
 
+	opts = append(opts, extra...)
 	return adt.NewClient(cfg.BaseURL, cfg.Username, cfg.Password, opts...)
 }
 

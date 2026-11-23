@@ -1994,6 +1994,17 @@ func (c *Client) GetSource(ctx context.Context, objectType, name string, opts *G
 	case "INCL":
 		return c.GetInclude(ctx, name)
 
+	case "ENHO":
+		// Source code plugin (enhancement implementation, HOOK_IMPL) — read-only GET
+		resp, err := c.transport.Request(ctx, fmt.Sprintf("/sap/bc/adt/enhancements/enhoxhh/%s/source/main", url.PathEscape(name)), &RequestOptions{
+			Method: "GET",
+			Accept: "text/plain",
+		})
+		if err != nil {
+			return "", fmt.Errorf("getting enhancement source: %w", err)
+		}
+		return string(resp.Body), nil
+
 	case "DDLS":
 		return c.GetDDLS(ctx, name)
 

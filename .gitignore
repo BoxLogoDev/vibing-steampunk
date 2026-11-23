@@ -63,3 +63,10 @@ abap-adt-api/
 
 # Session logs
 sessions/
+
+# per-system MCP launchers (contain SAP credentials)
+vsp-*.cmd
+
+# consolidated SAP credentials (single source of truth)
+.sap-secret.cmd
+.sap-secret-*.cmd
