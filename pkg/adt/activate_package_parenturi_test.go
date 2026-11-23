@@ -11,7 +11,7 @@ import (
 
 // Some systems (S/4HANA 2023 seen) send the inactive-objects feed without
 // adtcore:parentUri. The package filter read only that attribute, so every
-// object looked like it belonged to no package: ActivatePackage("ZTR2")
+// object looked like it belonged to no package: ActivatePackage("ZDEMO_PKG")
 // reported "Activated 0 objects, 0 failed" and ActivatePackageIterative
 // reported "All objects active — deployment verified" with the package's
 // objects still inactive. The package is resolved from the repository search
@@ -21,7 +21,7 @@ import (
 const inactiveFeedWithoutParentURI = `<?xml version="1.0" encoding="UTF-8"?>
 <ioc:inactiveObjects xmlns:ioc="http://www.sap.com/adt/inactivectsobjects">
   <ioc:entry><ioc:object ioc:user="TESTUSER">
-    <ioc:ref adtcore:uri="/sap/bc/adt/programs/includes/ztr2_f01" adtcore:type="PROG/I" adtcore:name="ZTR2_F01"
+    <ioc:ref adtcore:uri="/sap/bc/adt/programs/includes/zdemo_f01" adtcore:type="PROG/I" adtcore:name="ZDEMO_F01"
              xmlns:adtcore="http://www.sap.com/adt/core"/>
   </ioc:object></ioc:entry>
   <ioc:entry><ioc:object ioc:user="TESTUSER">
@@ -42,7 +42,7 @@ type parentURIServer struct {
 func (s *parentURIServer) start(t *testing.T) *Client {
 	t.Helper()
 	packages := map[string]string{ // search answer per object name; ZGHOST has none
-		"ZTR2_F01": `<adtcore:objectReference adtcore:uri="/sap/bc/adt/programs/includes/ztr2_f01" adtcore:type="PROG/I" adtcore:name="ZTR2_F01" adtcore:packageName="ZTR2"/>`,
+		"ZDEMO_F01": `<adtcore:objectReference adtcore:uri="/sap/bc/adt/programs/includes/zdemo_f01" adtcore:type="PROG/I" adtcore:name="ZDEMO_F01" adtcore:packageName="ZDEMO_PKG"/>`,
 		"ZOTHER":   `<adtcore:objectReference adtcore:uri="/sap/bc/adt/programs/programs/zother" adtcore:type="PROG/P" adtcore:name="ZOTHER" adtcore:packageName="ZOTHERPKG"/>`,
 	}
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -77,12 +77,12 @@ func TestActivatePackageResolvesPackageWhenParentURIIsMissing(t *testing.T) {
 	srv := &parentURIServer{}
 	client := srv.start(t)
 
-	result, err := client.ActivatePackage(context.Background(), "ztr2", 0)
+	result, err := client.ActivatePackage(context.Background(), "zdemo_pkg", 0)
 	if err != nil {
 		t.Fatalf("ActivatePackage: %v", err)
 	}
-	if len(result.Activated) != 1 || result.Activated[0].Name != "ZTR2_F01" {
-		t.Fatalf("want only ZTR2_F01 activated, got %+v (failed %+v)", result.Activated, result.Failed)
+	if len(result.Activated) != 1 || result.Activated[0].Name != "ZDEMO_F01" {
+		t.Fatalf("want only ZDEMO_F01 activated, got %+v (failed %+v)", result.Activated, result.Failed)
 	}
 	if len(result.Skipped) != 1 || !strings.Contains(result.Skipped[0], "ZGHOST") {
 		t.Fatalf("an object of unknown package must be reported in Skipped, got %+v", result.Skipped)
@@ -93,10 +93,10 @@ func TestActivatePackageResolvesPackageWhenParentURIIsMissing(t *testing.T) {
 }
 
 func TestActivatePackageIterativeDoesNotClaimVerifiedWhenParentURIIsMissing(t *testing.T) {
-	srv := &parentURIServer{} // the feed never empties: ZTR2_F01 stays inactive
+	srv := &parentURIServer{} // the feed never empties: ZDEMO_F01 stays inactive
 	client := srv.start(t)
 
-	result, err := client.ActivatePackageIterative(context.Background(), "ZTR2", 2)
+	result, err := client.ActivatePackageIterative(context.Background(), "ZDEMO_PKG", 2)
 	if err != nil {
 		t.Fatalf("ActivatePackageIterative: %v", err)
 	}
