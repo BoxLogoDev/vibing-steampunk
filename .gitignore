@@ -116,3 +116,18 @@ quickjs.zip
 
 # response cache (VSP_CACHE)
 .vsp-cache/
+
+# per-system MCP launchers (contain SAP credentials)
+vsp-*.cmd
+vsp-mcp.cmd
+
+# consolidated SAP credentials (single source of truth)
+.sap-secret.cmd
+.sap-secret-*.cmd
+
+# company ABAP working copies — never commit
+*.abap
+!**/testdata/**/*.abap
+!src/**/*.abap
+!embedded/**/*.abap
+!abap/**/*.abap

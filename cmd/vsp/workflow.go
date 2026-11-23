@@ -278,7 +278,7 @@ func createADTClientFor(cmd *cobra.Command) (*adt.Client, error) {
 
 // Deprecated: use createADTClientFor. Kept for the LSP path, which builds its
 // client opportunistically after its own auth step and has no command to hand.
-func createADTClient() *adt.Client {
+func createADTClient(extra ...adt.Option) *adt.Client {
 	opts := []adt.Option{
 		adt.WithClient(cfg.Client),
 		adt.WithLanguage(cfg.Language),
@@ -294,6 +294,7 @@ func createADTClient() *adt.Client {
 	if cfg.Expect != nil {
 		opts = append(opts, adt.WithExpect(*cfg.Expect))
 	}
+	opts = append(opts, extra...)
 	if len(cfg.TransportCmd) > 0 {
 		opts = append(opts, adt.WithTransportCmd(cfg.TransportCmd))
 		client := adt.NewClient(cfg.BaseURL, cfg.Username, cfg.Password, opts...)
